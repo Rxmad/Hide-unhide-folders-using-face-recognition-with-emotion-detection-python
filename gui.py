@@ -17,6 +17,8 @@ import cv2
 import pickle
 from platform import system
 def Verify():
+    arrface=[]
+    arrsmile=[]
     face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
     eye_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_eye.xml')
     smile_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_smile.xml')
@@ -39,6 +41,7 @@ def Verify():
             if conf>=4 and conf <= 85:
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 name = labels[id_]
+                arrface.append(name)
                 color = (255, 255, 255)
                 stroke = 2
                 cv2.putText(frame, name, (x,y), font, 1, color, stroke, cv2.LINE_AA)
@@ -47,6 +50,7 @@ def Verify():
                 for (sx,sy,sw,sh) in smile:
                     cv2.rectangle(roi_color,(sx,sy),(sx+sw,sy+sh),(0,0,0))
                     cv2.putText(frame,'smile',(x+sx,y+sy),font,1,(12,255,255),2,cv2.LINE_AA)
+                    arrsmile.append(sx)
             img_item = "7.png"
             cv2.imwrite(img_item, roi_color)
             color = (255, 0, 0)
@@ -59,9 +63,13 @@ def Verify():
         if cv2.waitKey(20) & 0xFF == ord('q'):
             break
     if name:
+        if len(arrface)>35 and len(arrsmile)>30:
+            cap.release()
+            cv2.destroyAllWindows()
+            return True
         cap.release()
         cv2.destroyAllWindows()
-        return True
+        return False
     else:
         cap.release()
         cv2.destroyAllWindows()
@@ -74,7 +82,7 @@ def check():
         lbl = tk.Label(window, text = "Done Hide/Unhide",width = 50, height = 2, fg ="green",bg = "white", font = ('times', 15, ' bold ') )
         lbl.place(x = 450, y = 480) 
     else:
-        lbl = tk.Label(window, text = "Its Not YOu",width = 50, height = 2, fg ="green",bg = "white", font = ('times', 15, ' bold ') )
+        lbl = tk.Label(window, text = "Its Not You and Smile Please",width = 50, height = 2, fg ="green",bg = "white", font = ('times', 15, ' bold ') )
         lbl.place(x = 450, y = 480) 
 def TakeImages():
     status=txt2.get()
